@@ -7,7 +7,7 @@
 要是能够利用栈溢出bug覆盖栈里的返回地址，变成我自己想要执行的code地址。
 ## 整个实验分成了3步骤,由简入深:
 - 修改返回地址eip值,执行函数hacker()
-1. test.c里的hacker函数:
+1. **test.c里的hacker函数**:
 ``` asm
 进入func函数，反汇编代码：
 
@@ -25,9 +25,9 @@
 0x7fffffffe520:	0x34343434	0x35353535
 局部变量(gdb) p	&str
 $2 = (char (*)[4]) 0x7fffffffe4f0
-```
 可见从str地址0x7ffffffe4f0到调用函数下条地址即返回地址0x7ffffffe508总共ox18，也就是24（换台机器可能就不是这个值），所以test.c确定pEIP地址的时候是数组的第24位。
-2. 再就是如何确定拷贝多少字节:
+```
+2. **再就是如何确定拷贝多少字节**:
 ``` gdb
 查看shellcode的内存情况：
 (gdb) p	shellcode
