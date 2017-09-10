@@ -9,12 +9,14 @@
 - 修改返回地址eip值,执行函数hancer()
 1. 如test.c里的hacker函数；
 进入func函数，反汇编代码：
+``` asm
    0x00000000004005dd <+0>:	push   %rbp
    0x00000000004005de <+1>:	mov    %rsp,%rbp
    0x00000000004005e1 <+4>:	sub    $0x20,%rsp
    0x00000000004005e5 <+8>:	mov    %rdi,-0x18(%rbp)
 => 0x00000000004005e9 <+12>:	movl   $0x0,-0x10(%rbp)
    0x00000000004005f0 <+19>:	mov    -0x18(%rbp),%rcx
+```
  寄存器：
  (gdb) x/10x $rbp
 0x7fffffffe500:	0xffffe550	0x00007fff	0x004006b2	0x00000000
