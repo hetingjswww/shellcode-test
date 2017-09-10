@@ -1,10 +1,36 @@
 # stack flow hacker
 ## 基础知识点:
 64位系统
-- 压栈顺序基本为：参数从右到左（不过64位系统参数用寄存器保存），下条指令地址作为返回地址，原调用栈rbp
+- 压栈顺序基本为：参数从右到左（不过64位系统参数用寄存器保存），下条指令地
+址作为返回地址，原调用栈rbp
 接着就是被调用函数的rbp位置，rsp-0xxxx给被调用函数栈利用，包括被调用函数局部变量。
 - 原理：
 要是能够利用栈溢出bug覆盖栈里的返回地址，变成我自己想要执行的code地址。
+- 堆栈执行保护
+OS | Execution space protection	 | ASLR (Address Space Layout Randomization) | Description | Check Tool
+------------ | ------------- | ------------ | ------------ | ------------
+Linux | Compiler (Link) Option:
+-Wl,-z,noexecstack or -Wa,--noexecstack
+
+
+System option: 
+/proc/sys/kernel/exec-shield  | Compiler Option:
+-fPIC -pie
+
+
+System option:
+/proc/sys/kernel/randomize_va_space
+Or 
+sysctl -w kernel.randomize_va_space=NEWVALUE | Linux has enabled a weak[6] form of ASLR by default since kernel version 2.6.12 (released June 2005).|1) http://www.trapkit.de/tools/checksec.html
+2) find /lib -exec execstack -q {} \; -print 2> /dev/null | grep ^X  to check whether the stack is executable
+3) execstack -q ~/lib/libfoo.so.1 ~/bin/bar
+        will query executable stack marking of the given files.
+
+4) Command
+readelf -h -d /usr/sbin/smbd | grep ‘Type:.*DYN’
+If the file has been compiled for PIE, the command will return something similar to the following:
+Type: DYN (Shared object file)
+
 ## 整个实验分成了3步骤,由简入深:
 - 修改返回地址eip值,执行函数hacker()
 1. **test.c里的hacker函数**:
@@ -40,3 +66,4 @@ $4 = 0x7fffffffe510 "111111112222333344445555\033\006@"
 可以得到预期的结果，顺利的调到hacker函数。
 ```
 - 返回地址指向一个栈地址
+
